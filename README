@@ -1,0 +1,5 @@
+TO UPLOAD:
+run openocd with the stm32f4discovery.cfg file:
+openocd -f stm32f4discovery.cfg
+
+then to upload code: do magical things

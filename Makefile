@@ -202,3 +202,8 @@ ULIBS =
 
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
+
+
+upload:
+	@echo "NOW UPLOADING"
+	@echo "ENSURE OPENOCD IS RUNNING!!"

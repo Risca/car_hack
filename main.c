@@ -18,21 +18,51 @@
 #include "hal.h"
 #include "test.h"
 
+
+/*
+ * PWM configuration structure.
+ * Cyclic callback enabled, channels 1 and 4 enabled without callbacks,
+ * the active state is a logic one.
+ */
+static const PWMConfig pwmcfg = {
+  100000,                                   /* 100kHz PWM clock frequency.  */
+  128,                                      /* PWM period is 128 cycles.    */
+  NULL,
+  {
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+  },
+  /* HW dependent part.*/
+  0,
+  0
+};
+
+
+
 /*
  * This is a periodic thread that does absolutely nothing except flashing
  * a LED.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
-
+	static pwmcnt_t x = 0;
   (void)arg;
   chRegSetThreadName("blinker");
   while (TRUE) {
-    palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
-    chThdSleepMilliseconds(500);
-    palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
-    chThdSleepMilliseconds(500);
+//    palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
+//    chThdSleepMilliseconds(500);
+//    palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
+//    chThdSleepMilliseconds(500);
+	pwmEnableChannel(&PWMD4, 0, x);
+	pwmEnableChannel(&PWMD4, 1, x);
+	pwmEnableChannel(&PWMD4, 2, x);
+    pwmEnableChannel(&PWMD4, 3, x);
+    x++;
+
   }
+  return 5;
 }
 
 /*
@@ -59,6 +89,15 @@ int main(void) {
   palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 
   /*
+   * Initializes the PWM driver 4, routes the TIM4 outputs to the board LEDs.
+   */
+  pwmStart(&PWMD4, &pwmcfg);
+  palSetPadMode(GPIOD, GPIOD_LED4, PAL_MODE_ALTERNATE(2));      /* Green.   */
+  palSetPadMode(GPIOD, GPIOD_LED3, PAL_MODE_ALTERNATE(2));      /* Orange.  */
+  palSetPadMode(GPIOD, GPIOD_LED5, PAL_MODE_ALTERNATE(2));      /* Red.     */
+  palSetPadMode(GPIOD, GPIOD_LED6, PAL_MODE_ALTERNATE(2));      /* Blue.    */
+
+  /*
    * Creates the example thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
@@ -72,4 +111,5 @@ int main(void) {
       TestThread(&SD2);
     chThdSleepMilliseconds(500);
   }
+  return 5;//lol
 }
