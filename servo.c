@@ -63,7 +63,6 @@ void servoSetValue(Servo *servo, uint16_t value) {
 void servoSetMax(Servo *servo, uint16_t value) {
 	servo->max = value;
 }
-
 void servoSetMin(Servo *servo, uint16_t value) {
 	servo->min = value;
 }

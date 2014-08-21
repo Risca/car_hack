@@ -102,7 +102,8 @@ CSRC = $(PORTSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        main.c \
-       servo.c
+       servo.c \
+       MotorControls.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
